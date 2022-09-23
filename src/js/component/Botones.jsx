@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
-/* import * as config from './config'; */
+import * as config from './config';
 
 const Botones = () => {
+  const [musicNow, setMusicNow] = useState('');
+  const [music, setMusic] = useState([]);
 
-  const [music, setMusic] = useState(null);
+let play = null;
+let backwards= null;
+let forward= null
+
   useEffect(() => {
     //getMusic();
     getMusicAsync();
   }, [])
   const getMusicAsync = async () => {
-    
-    let url = "https://assets.breatheco.de/apis/sound/songs"
+
+
     let options_get = {
       method: 'GET', // GET, POST, PUT, DELETE, 
       headers: {
@@ -19,7 +24,7 @@ const Botones = () => {
     }
 
     try {
-      const response = await fetch(url, options_get);
+      const response = await fetch(config.URL_SONGS, options_get);
       const data = await response.json();
       console.log(data);
 
@@ -29,13 +34,37 @@ const Botones = () => {
       console.log(error);
     }
   }
+  /*   let musicNow= null;
+    const handleClick = () => {
+      musicNow=songURL + music.url;
+      console.log(musicNow)
+  } */
+  const songURL = "https://assets.breatheco.de/apis/sound/";
 
- return (
+  return (
     <>
-      <ul className="list-group" >
-        <li className="list-group-item" onClick={()=>{ music}}>1</li>
+
+      <ul className="list-group" >{
+        !!music && // Validar que exista la variable o datos
+        music.length > 0 &&
+        music.map((music, index) => {
+          return (
+            <li className="list-group-item" type='button' key={index} onClick={() => { setMusicNow(music.url) }}>
+              {music.name}
+            </li>
+
+          )
+        })
+      }
       </ul>
-     <audio src="https://assets.breatheco.de/apis/sound/files/mario/songs/castle.mp3" />  
+      <audio src={songURL + musicNow} controls />
+      
+      <div className="btn-group mt-3 d-flex justify-content-center" role="group" aria-label="Basic example">
+        <button type="button" className='form-control border border-0 py-3 px-5'><i className="fa-solid fa-backward "/></button>
+        <button type="button" className=' form-control border border-0 py-3 mx-2 '><i className="fa-solid fa-play "/></button>
+        <button type="button" className='form-control border border-0 py-3 px-5'><i className="fa-solid fa-forward "/></button>
+      </div>
+
     </>
   )
 
