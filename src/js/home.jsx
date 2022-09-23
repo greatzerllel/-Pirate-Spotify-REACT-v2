@@ -6,7 +6,7 @@ import Titulo from "./component/Titulo.jsx";
 
 //create your first component
 const Home = () => {
-	
+
 	return (
 		<>
 			<Titulo className={'text-center m-5'} name={'Spotify pirata'} />
