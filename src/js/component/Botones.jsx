@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as config from './config';
 
 const Botones = () => {
-  const [musicNow, setMusicNow] = useState('');
+  let audioRef = useRef(null);
   const [music, setMusic] = useState([]);
-  let playMusic = null;
+  const[isPlaying, setIsPlaying] = useState(false);
   
-  
- /*  let playBack= null;
-  let playNext= null */
+  const setMusicNow = (url) => { 
+    const songURL = "https://assets.breatheco.de/apis/sound/";
+    audioRef.current.src = songURL + url
+  }
+
+
+  const [trackIndex, setTrackIndex] = useState(0);
 
   useEffect(() => {
-    //getMusic();
+    
     getMusicAsync();
   }, [])
   const getMusicAsync = async () => {
@@ -34,13 +38,8 @@ const Botones = () => {
     } catch (error) {
       console.log(error);
     }
+
   }
-  /*   let musicNow= null;
-    const handleClick = () => {
-      musicNow=songURL + music.url;
-      console.log(musicNow)
-  } */
-  const songURL = "https://assets.breatheco.de/apis/sound/";
 
   return (
     <>
@@ -50,27 +49,29 @@ const Botones = () => {
         music.length > 0 &&
         music.map((music, index) => {
           return (
-            <li className="list-group-item" type='button' key={index} onClick={() => {setMusicNow(music.url)}}>
-              {music.id} {music.name}
+            <li className="list-group-item" type='button' key={index} onClick={() => { setMusicNow(music.url) }}>
+              {music.id} <b>{music.name.toUpperCase()}</b>
             </li>
           )
         })
       }
       </ul>
 
-      <audio src={songURL + musicNow} />
+      <audio ref={audioRef}  />
 
       <div className="btn-group mt-3 d-flex justify-content-center" role="group" aria-label="Basic example">
-        <button type="button" className='form-control border border-0 py-3 px-5' ><i className="fa-solid fa-backward " /></button>
-        <button type="button" className=' form-control border border-0 py-3 mx-2 ' onClick={()=>{ 
-          playMusic=songURL + musicNow;  
-          let song = new Audio(playMusic);
-           song.play();
+        <button type="button" className='form-control border border-0 py-3 px-5' onClick={() => { alert('soy el boton de retroceder') }} ><i className="fa-solid fa-backward " /></button>
 
-           console.log(playMusic)
-          }}>
-  <i className="fa-solid fa-play " /></button>
-        <button type="button" className='form-control border border-0 py-3 px-5'><i className="fa-solid fa-forward " /></button>
+        <button type="button" className=' form-control border border-0 py-3 mx-2 ' onClick={() => {
+
+
+          isPlaying ? ( audioRef.current.pause(), setIsPlaying(!isPlaying)) : (audioRef.current.play(), setIsPlaying(!isPlaying));
+
+          console.log(audioRef)
+        }}>
+          <i className={"fa-solid " + (isPlaying? 'fa-pause' : 'fa-play')} /></button>
+
+        <button type="button" className='form-control border border-0 py-3 px-5' onClick={() => { alert('soy el boton de retroceder') }}><i className="fa-solid fa-forward " /></button>
       </div>
 
     </>
